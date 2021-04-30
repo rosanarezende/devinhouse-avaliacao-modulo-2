@@ -25,29 +25,16 @@ import br.com.devinhouse.springboot.service.ProcessoService;
 import javassist.NotFoundException;
 
 @RestController
-@RequestMapping(value = "/processo")
+@RequestMapping(value = "/processos")
 public class ProcessoController {
 	
 	@Autowired
 	private ProcessoService service;
 	
-	// ================================= NÃO FUNCIONA =================================
 	//	1 - Deverá haver um endpoint para criação de um processo;
-	//		{
-	//	        "id": 50,
-	//	        "cdAssunto": 50,
-	//	        "cdInteressado": 50,
-	//	        "descricao": "Processo 50de testes DEV In House ",
-	//	        "descricaoAssunto": "Assunto 50 de testes DEV In House ",
-	//	        "nmInteressado": "Jão Antonio ::: 49",
-	//	        "nuAnoProcesso": "2020",
-	//	        "nuProcesso": 50,
-	//	        "sgOrgaoProcesso": "SOFT",
-	//	        "chaveProcesso": "SOFT 50/2020"
-	//	    }
 	@RequestMapping(headers = "api-version=v1", value= "v1" + "/cadastrar", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<ProcessoDTO> cadastrarProcesso(@RequestBody ProcessoDTO processo ) {
+	public ProcessoDTO cadastrarProcesso(@RequestBody ProcessoDTO processo) {
 		try {
 			return service.cadastrarProcesso(processo);
 		} catch (NotFoundException foundException) {
@@ -67,11 +54,7 @@ public class ProcessoController {
 	@RequestMapping(headers = "api-version=v1", value= "v1" + "/listar-id/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ProcessoDTO listarProcessoPorId(@PathVariable Integer id) {
-		try {
-			return service.recuperarProcessosPorId(id);
-		} catch (NotFoundException foundException) {
-            throw new ResponseStatusException(NOT_FOUND, foundException.getMessage());
-        }
+		return service.recuperarProcessosPorId(id);
 	}
 		
 	//	4 - Deverá haver um endpoint para buscar um processo baseado no seu número de processo (chaveProcesso);
@@ -95,9 +78,7 @@ public class ProcessoController {
             throw new ResponseStatusException(NOT_FOUND, foundException.getMessage());
         }
 	}
-	
-	
-	// ================================= NÃO FUNCIONA =================================
+		
 	//	6 - Deverá haver um endpoint para exclusão de um processo baseado na sua identificação única (id);
 	@RequestMapping(headers = "api-version=v1", value= "v1" + "/deletar/{id}", method = DELETE , produces = APPLICATION_JSON_VALUE)
 	@ResponseBody

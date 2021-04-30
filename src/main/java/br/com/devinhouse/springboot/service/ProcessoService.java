@@ -1,6 +1,7 @@
 package br.com.devinhouse.springboot.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,26 +25,27 @@ public class ProcessoService {
 		return repository.listarTodosProcessos();
 	}
 	
-	public ProcessoDTO recuperarProcessosPorId(Integer id) throws NotFoundException {
+	public ProcessoDTO recuperarProcessosPorId(Integer id) {
 		List<ProcessoDTO> todosProcessos = recuperarTodosProcessos();
 		for (ProcessoDTO processo : todosProcessos) {
 			if(id.equals(processo.getId())) {
 				return processo;
 			}
 		}
-		throw new NotFoundException("Não foi encontrado processo com ID '" + id + "'.");
+		return null;
 	}
 	
-	
-	// ================================= NÃO FUNCIONA =================================
-	public List<ProcessoDTO> cadastrarProcesso(ProcessoDTO processo) throws NotFoundException {
+	public ProcessoDTO cadastrarProcesso(ProcessoDTO processo) throws NotFoundException {
 		List<ProcessoDTO> todosProcessos = recuperarTodosProcessos();
+		
+		// Regra de negócio: Não poderá ser cadastrado um novo processo com um id já existente.
 		ProcessoDTO processoEncontrado = recuperarProcessosPorId(processo.getId());		
-		if(processoEncontrado == null) {
-			todosProcessos.add(processo);
-			return todosProcessos;
+		if(processoEncontrado != null) {
+			throw new NotFoundException("Não foi possível cadastrar processo com ID '" + processo.getId() + " pois já existe no banco de dados'.");
 		}
-		throw new NotFoundException("Não foi possível cadastrar processo com ID '" + processo.getId() + " pois já existe no banco de dados'.");
+		
+		todosProcessos.add(processo);
+		return processo;
 	}
 	
 	public ProcessoDTO atualizarProcesso(Integer id, ProcessoDTO novasInfos) throws NotFoundException{
@@ -96,13 +98,11 @@ public class ProcessoService {
 		throw new NotFoundException("Não foi encontrado processo com chave '" + chaveProcesso + "'.");
 	}
 	
-	
-	// ================================= NÃO FUNCIONA =================================
 	public List<ProcessoDTO> deletarProcessoPorId(Integer id) throws NotFoundException{
 		List<ProcessoDTO> todosProcessos = recuperarTodosProcessos();
 		ProcessoDTO processoEncontrado = recuperarProcessosPorId(id);
 		if(processoEncontrado != null) {
-			todosProcessos.remove(processoEncontrado);
+			todosProcessos.remove(id - 1);
 			return todosProcessos;			
 		}
 		throw new NotFoundException("Não foi encontrado processo com ID '" + id + "'.");
